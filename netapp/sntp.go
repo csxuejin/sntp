@@ -6,11 +6,12 @@
 package netapp
 
 import (
-	"github.com/btfak/sntp/netevent"
-	"github.com/btfak/sntp/sntp"
 	"net"
 	"strconv"
 	"strings"
+
+	"github.com/csxuejin/sntp/netevent"
+	"github.com/csxuejin/sntp/sntp"
 )
 
 var handler *Handler

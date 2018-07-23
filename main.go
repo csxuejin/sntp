@@ -6,8 +6,8 @@
 package main
 
 import (
-	"github.com/btfak/sntp/netapp"
-	"github.com/btfak/sntp/netevent"
+	"github.com/csxuejin/sntp/netapp"
+	"github.com/csxuejin/sntp/netevent"
 )
 
 func main() {
