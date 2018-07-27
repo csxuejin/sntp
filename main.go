@@ -12,6 +12,6 @@ import (
 
 func main() {
 	var handler = netapp.GetHandler()
-	netevent.Reactor.ListenUdp(123, handler)
+	netevent.Reactor.ListenUdp(9090, handler)
 	netevent.Reactor.Run()
 }
