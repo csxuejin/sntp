@@ -1,4 +1,7 @@
 build:
+    GOOS=linux GOARCH=amd64 go build -o gontp main.go	
+
+deploy:
 	GOOS=linux GOARCH=amd64 go build -o gontp main.go
 	scp config.json root@vm2:/root/ntp
 	tar czvf gontp.tar gontp

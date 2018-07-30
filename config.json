@@ -1,4 +1,5 @@
 {
     "server_port": "123",
-    "server_ip": "172.20.5.91"
+    "server_ip": "172.20.5.91",
+    "sync_frequency": 5
 }

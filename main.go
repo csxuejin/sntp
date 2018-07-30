@@ -21,8 +21,9 @@ import (
 )
 
 type Config struct {
-	ServerPort string `json:"server_port"`
-	ServerIP   string `json:"server_ip"`
+	ServerPort    string `json:"server_port"`
+	ServerIP      string `json:"server_ip"`
+	SyncFrequency int    `json:"sync_frequency"`
 }
 
 var (
@@ -102,22 +103,27 @@ func ntpServer(log *logger.Logger) cli.ActionFunc {
 
 func ntpClient(log *logger.Logger) cli.ActionFunc {
 	return func(ctx *cli.Context) error {
+		ticker := time.NewTicker(time.Second * time.Duration(config.SyncFrequency))
 		for {
-			t, err := sntp.Client(config.ServerIP, config.ServerPort)
-			if err != nil {
-				log.Errorf("sntp.Client(%v, %v): %v\n", config.ServerIP, config.ServerPort, err)
-				break
+			select {
+			case <-ticker.C:
+				t, err := sntp.Client(config.ServerIP, config.ServerPort)
+				if err != nil {
+					log.Errorf("sntp.Client(%v, %v): %v\n", config.ServerIP, config.ServerPort, err)
+					break
+				}
+
+				cmd := exec.Command("date", "--set", t.Format("01/02/2006 15:04:05.999999999"))
+				if err := cmd.Run(); err != nil {
+					log.Errorf("cmd.Run(): %v", err)
+					break
+				}
+
+				log.Infof("set time to %v\n", t)
+
+			default:
+
 			}
-
-			cmd := exec.Command("date", "--set", t.Format("01/02/2006 15:04:05.999999999"))
-			if err := cmd.Run(); err != nil {
-				log.Errorf("cmd.Run(): %v", err)
-				break
-			}
-
-			log.Infof("set time to %v\n", t)
-
-			time.Sleep(time.Second * 3)
 		}
 		return nil
 	}

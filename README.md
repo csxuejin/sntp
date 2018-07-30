@@ -1,25 +1,17 @@
-sntp
-====
+### gosntp
 
-### A implementation of NTP server with Golang
-##### What this?
-- Base on [RFC 2030](http://tools.ietf.org/html/rfc2030)
-- Multiple equipments sync time from local
-- Design for multiple equipments which can't connect to internet and need synchronization time
-- Compatible with [ntpdate](http://www.eecis.udel.edu/~mills/ntp/html/ntpdate.html) service on the linux
-- NTP client is fork from [beevik](https://github.com/beevik/ntp/)，a better client
+#### 使用场景
+- 内网中部分机器无法连接网络，需要以一台作为 ntp server，其余作为 ntp client，保持集群中机器时间的一致。
 
-#### Usage manual
-##### 1. install Golang
+#### 使用方式
+- go get github.com/csxuejin/sntp
+- cd $GOPATH/src/github.com/csxuejin/sntp
+- 运行 `make build` 将程序编译为 linux 环境可执行文件
+- 设置 config.json ，其中各个字段的含义解释如下：
+    - "server_port"  代表 ntp server 运行端口 
+    - "server_ip"  代表 ntp server 所在的 ip，client 需要知道该 ip 才能连接
+    - "sync_frequency" 代表 ntp client 多久和 server 通信一次(单位为秒)，每次通信后更新系统时间
 
-Please reference  [Go install](https://github.com/astaxie/build-web-application-with-golang/blob/master/ebook/01.1.md) chapter of open-source Golang book "build-web-application-with-golang".
+- 拷贝 config.json 以及可执行文件 gontp 到服务器，如果要作为 ntp server 则运行 `./gontp server`; 如果要作为 ntp client 则运行 `./gontp client`
 
-##### 2. install Sntp
-
-    $ go get github.com/csxuejin/sntp
-
-##### More? 
-[My Blog](http://www.btfak.com)
-
-##### License
-[Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
+以上步骤完成后，client 会和 server 保持时间一致。
