@@ -60,7 +60,7 @@ func (m *msg) SetMode(md mode) {
 // Client returns the "receive time" from the remote NTP server
 // specifed as host.  NTP client mode is used.
 func Client(host string) (time.Time, error) {
-	raddr, err := net.ResolveUDPAddr("udp", host+":123")
+	raddr, err := net.ResolveUDPAddr("udp", host+":9090")
 	if err != nil {
 		return time.Now(), err
 	}
