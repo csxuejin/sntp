@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"strconv"
 	"time"
 
 	"github.com/csxuejin/sntp/netapp"
@@ -20,7 +21,8 @@ import (
 )
 
 type Config struct {
-	ServerIP string `json:"server_ip"`
+	ServerPort string `json:"server_port"`
+	ServerIP   string `json:"server_ip"`
 }
 
 var (
@@ -84,8 +86,14 @@ func main() {
 
 func ntpServer(log *logger.Logger) cli.ActionFunc {
 	return func(ctx *cli.Context) error {
+		port, err := strconv.Atoi(config.ServerPort)
+		if err != nil {
+			log.Errorf("strconv.Atoi(%v): %v\n", config.ServerPort, err)
+			return nil
+		}
+
 		var handler = netapp.GetHandler()
-		netevent.Reactor.ListenUdp(9090, handler)
+		netevent.Reactor.ListenUdp(port, handler)
 		netevent.Reactor.Run()
 
 		return nil
@@ -95,9 +103,9 @@ func ntpServer(log *logger.Logger) cli.ActionFunc {
 func ntpClient(log *logger.Logger) cli.ActionFunc {
 	return func(ctx *cli.Context) error {
 		for {
-			t, err := sntp.Client(config.ServerIP)
+			t, err := sntp.Client(config.ServerIP, config.ServerPort)
 			if err != nil {
-				log.Errorf("sntp.Client(%v): %v\n", config.ServerIP, err)
+				log.Errorf("sntp.Client(%v, %v): %v\n", config.ServerIP, config.ServerPort, err)
 				break
 			}
 
